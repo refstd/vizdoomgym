@@ -1,43 +1,95 @@
+import logging
+from time import sleep
+
 import gym
 from gym import spaces
+from gym.utils import seeding
 from vizdoom import *
 import numpy as np
 import os
 from gym.envs.classic_control import rendering
 
-CONFIGS = [['basic.cfg', 3],                # 0
-           ['deadly_corridor.cfg', 7],      # 1
-           ['defend_the_center.cfg', 3],    # 2
-           ['defend_the_line.cfg', 3],      # 3
-           ['health_gathering.cfg', 3],     # 4
-           ['my_way_home.cfg', 5],          # 5
-           ['predict_position.cfg', 3],     # 6
-           ['take_cover.cfg', 2],           # 7
-           ['deathmatch.cfg', 20],          # 8
-           ['health_gathering_supreme.cfg', 3]]  # 9
+
+log = logging.getLogger(__name__)
+
+
+CONFIGS = [
+    ['basic.cfg', 3],                       # 0
+    ['deadly_corridor.cfg', 7],             # 1
+    ['defend_the_center.cfg', 3],           # 2
+    ['defend_the_line.cfg', 3],             # 3
+    ['health_gathering.cfg', 3],            # 4
+    ['my_way_home.cfg', 5],                 # 5
+    ['predict_position.cfg', 3],            # 6
+    ['take_cover.cfg', 2],                  # 7
+    ['deathmatch.cfg', 20],                 # 8
+    ['health_gathering_supreme.cfg', 3],    # 9
+    ['my_way_home_sparse.cfg', 5],          # 10
+    ['my_way_home_very_sparse.cfg', 5],     # 11
+]
 
 
 class VizdoomEnv(gym.Env):
 
     def __init__(self, level):
+        self.initialized = False
 
         # init game
-        self.game = DoomGame()
-        self.game.set_screen_resolution(ScreenResolution.RES_640X480)
-        scenarios_dir = os.path.join(os.path.dirname(__file__), 'scenarios')
-        self.game.load_config(os.path.join(scenarios_dir, CONFIGS[level][0]))
-        self.game.set_window_visible(False)
-        self.game.init()
+        self.level = level
+        self.game = None
         self.state = None
 
-        self.action_space = spaces.Discrete(CONFIGS[level][1])
-        self.observation_space = spaces.Box(0, 255, (self.game.get_screen_height(),
-                                                     self.game.get_screen_width(),
-                                                     self.game.get_screen_channels()),
-                                            dtype=np.uint8)
+        self.curr_seed = 0
+
+        self.screen_w, self.screen_h, self.channels = 640, 480, 3
+        self.screen_resolution = ScreenResolution.RES_640X480
+        self.calc_observation_space()
+
+        self.action_space = spaces.Discrete(CONFIGS[self.level][1])
+
         self.viewer = None
 
+        self.seed()
+
+    def calc_observation_space(self):
+        self.observation_space = spaces.Box(0, 255, (self.screen_w, self.screen_h, self.channels), dtype=np.uint8)
+
+    def _ensure_initialized(self, mode='algo'):
+        if self.initialized:
+            # Doom env already initialized!
+            return
+
+        self.game = DoomGame()
+        scenarios_dir = os.path.join(os.path.dirname(__file__), 'scenarios')
+        self.game.load_config(os.path.join(scenarios_dir, CONFIGS[self.level][0]))
+        self.game.set_screen_resolution(self.screen_resolution)
+
+        if mode == 'algo':
+            self.game.set_window_visible(False)
+        elif mode == 'human':
+            self.game.add_game_args('+freelook 1')
+            self.game.set_window_visible(True)
+            self.game.set_mode(Mode.SPECTATOR)
+        else:
+            raise Exception('Unsupported mode')
+        self.game.init()
+
+        self.initialized = True
+
+    def _start_episode(self):
+        if self.curr_seed > 0:
+            self.game.set_seed(self.curr_seed)
+            self.curr_seed = 0
+        self.game.new_episode()
+        return
+
+    def seed(self, seed=None):
+        self.curr_seed = seeding.hash_seed(seed) % 2 ** 32
+        return [self.curr_seed]
+
     def step(self, action):
+        self._ensure_initialized()
+
         # convert action to vizdoom action space (one hot)
         act = np.zeros(self.action_space.n)
         act[action] = 1
@@ -57,7 +109,9 @@ class VizdoomEnv(gym.Env):
         return observation, reward, done, info
 
     def reset(self):
-        self.game.new_episode()
+        self._ensure_initialized()
+
+        self._start_episode()
         self.state = self.game.get_state()
         img = self.state.screen_buffer
         return np.transpose(img, (1, 2, 0))
@@ -68,10 +122,32 @@ class VizdoomEnv(gym.Env):
             img = np.transpose(img, [1, 2, 0])
 
             if self.viewer is None:
-                self.viewer = rendering.SimpleImageViewer()
+                self.viewer = rendering.SimpleImageViewer(maxwidth=800)
             self.viewer.imshow(img)
         except AttributeError:
             pass
+
+    def play_human_mode(self):
+        self._ensure_initialized('human')
+        self._start_episode()
+
+        while not self.game.is_episode_finished():
+            self.game.advance_action()
+            state = self.game.get_state()
+            total_reward = self.game.get_total_reward()
+
+            if state is not None:
+                print('===============================')
+                print('State: #' + str(state.number))
+                print('Action: \t' + str(self.game.get_last_action()) + '\t (=> only allowed actions)')
+                print('Reward: \t' + str(self.game.get_last_reward()))
+                print('Total Reward: \t' + str(total_reward))
+                sleep(0.02857)  # 35 fps = 0.02857 sleep between frames
+
+        sleep(1)
+        print('===============================')
+        print('Done')
+        return
 
     @staticmethod
     def get_keys_to_action():

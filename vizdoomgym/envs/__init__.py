@@ -5,6 +5,8 @@ from vizdoomgym.envs.vizdoomdefendcenter import VizdoomDefendCenter
 from vizdoomgym.envs.vizdoomdefendline import VizdoomDefendLine
 from vizdoomgym.envs.vizdoomhealthgathering import VizdoomHealthGathering
 from vizdoomgym.envs.vizdoommywayhome import VizdoomMyWayHome
+from vizdoomgym.envs.vizdoommywayhomesparse import VizdoomMyWayHomeSparse
+from vizdoomgym.envs.vizdoommywayhomeverysparse import VizdoomMyWayHomeVerySparse
 from vizdoomgym.envs.vizdoompredictposition import VizdoomPredictPosition
 from vizdoomgym.envs.vizdoomtakecover import VizdoomTakeCover
 from vizdoomgym.envs.vizdoomdeathmatch import VizdoomDeathmatch

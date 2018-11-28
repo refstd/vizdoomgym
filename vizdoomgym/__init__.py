@@ -31,6 +31,16 @@ register(
 )
 
 register(
+    id='VizdoomMyWayHomeSparse-v0',
+    entry_point='vizdoomgym.envs:VizdoomMyWayHomeSparse'
+)
+
+register(
+    id='VizdoomMyWayHomeVerySparse-v0',
+    entry_point='vizdoomgym.envs:VizdoomMyWayHomeVerySparse'
+)
+
+register(
     id='VizdoomPredictPosition-v0',
     entry_point='vizdoomgym.envs:VizdoomPredictPosition'
 )
