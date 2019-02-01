@@ -127,6 +127,10 @@ class VizdoomEnv(gym.Env):
         except AttributeError:
             pass
 
+    def close(self):
+        if self.viewer is not None:
+            self.viewer.close()
+
     def play_human_mode(self):
         self._ensure_initialized('human')
         self._start_episode()
