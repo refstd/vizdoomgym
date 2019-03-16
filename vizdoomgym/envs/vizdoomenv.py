@@ -1,14 +1,14 @@
 import logging
+import os
 from time import sleep
 
+import cv2
 import gym
 from gym import spaces
-from gym.utils import seeding
-from vizdoom import *
-import numpy as np
-import os
 from gym.envs.classic_control import rendering
-
+from gym.utils import seeding
+import numpy as np
+from vizdoom import *
 
 log = logging.getLogger(__name__)
 
@@ -32,11 +32,12 @@ CONFIGS = [
 
 class VizdoomEnv(gym.Env):
 
-    def __init__(self, level):
+    def __init__(self, level, show_automap=False):
         self.initialized = False
 
         # init game
         self.level = level
+        self.show_automap = show_automap
         self.game = None
         self.state = None
 
@@ -73,6 +74,19 @@ class VizdoomEnv(gym.Env):
             self.game.set_mode(Mode.SPECTATOR)
         else:
             raise Exception('Unsupported mode')
+
+        if self.show_automap:
+            self.game.set_automap_buffer_enabled(True)
+            self.game.set_automap_mode(AutomapMode.OBJECTS)
+            self.game.set_automap_rotate(False)
+            self.game.set_automap_render_textures(True)
+
+            self.game.add_available_game_variable(GameVariable.POSITION_X)
+            self.game.add_available_game_variable(GameVariable.POSITION_Y)
+            self.game.add_available_game_variable(GameVariable.POSITION_Z)
+            self.game.add_game_args("+am_followplayer 1")
+            self.game.add_game_args("+am_backcolor 000000")
+
         self.game.init()
 
         self.initialized = True
@@ -147,8 +161,18 @@ class VizdoomEnv(gym.Env):
                 print('Action: \t' + str(self.game.get_last_action()) + '\t (=> only allowed actions)')
                 print('Reward: \t' + str(self.game.get_last_reward()))
                 print('Total Reward: \t' + str(total_reward))
-                sleep(0.02857)  # 35 fps = 0.02857 sleep between frames
 
+                if self.show_automap and state.automap_buffer is not None:
+                    map = state.automap_buffer
+                    map = np.swapaxes(map, 0, 2)
+                    map = np.swapaxes(map, 0, 1)
+                    cv2.imshow('ViZDoom Automap Buffer', map)
+                    cv2.waitKey(28)
+                else:
+                    sleep(0.02857)  # 35 fps = 0.02857 sleep between frames
+
+        if self.show_automap:
+            cv2.destroyAllWindows()
         sleep(1)
         print('===============================')
         print('Done')
