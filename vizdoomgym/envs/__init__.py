@@ -11,3 +11,5 @@ from vizdoomgym.envs.vizdoompredictposition import VizdoomPredictPosition
 from vizdoomgym.envs.vizdoomtakecover import VizdoomTakeCover
 from vizdoomgym.envs.vizdoomdeathmatch import VizdoomDeathmatch
 from vizdoomgym.envs.vizdoomhealthgatheringsupreme import VizdoomHealthGatheringSupreme
+
+from vizdoomgym.envs.vizdoomgoalenv import VizdoomGoalEnv, VizDoomMyWayHomeGoal
