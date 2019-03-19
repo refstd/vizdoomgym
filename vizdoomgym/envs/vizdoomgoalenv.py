@@ -44,19 +44,20 @@ class VizdoomGoalEnv(VizdoomEnv):
     def step(self, action):
         obs, reward, done, info = super(VizdoomGoalEnv, self).step(action)
 
-        # Check closeness with goal position
-        variables = self.game.get_state().game_variables
-        agent_x, agent_y, agent_a = variables[1], variables[2], variables[3]
-        goal_x, goal_y, goal_a = variables[4], variables[5], variables[6]
+        if not done:
+            # Check closeness with goal position
+            variables = self.game.get_state().game_variables
+            agent_x, agent_y, agent_a = variables[1], variables[2], variables[3]
+            goal_x, goal_y, goal_a = variables[4], variables[5], variables[6]
 
-        position_close = np.abs(agent_x - goal_x) < 30. and np.abs(agent_y - goal_y) < 30.
+            position_close = np.abs(agent_x - goal_x) < 30. and np.abs(agent_y - goal_y) < 30.
 
-        # https://gamedev.stackexchange.com/a/4472
-        angle_close = 180 - np.abs(np.abs(agent_a - goal_a) - 180) < 15.
+            # https://gamedev.stackexchange.com/a/4472
+            angle_close = 180 - np.abs(np.abs(agent_a - goal_a) - 180) < 15.
 
-        if position_close and angle_close:
-            done = True
-            reward += 1.0
+            if position_close and angle_close:
+                done = True
+                reward += 10.0
 
         return self._make_observation(obs), reward, done, info
 
