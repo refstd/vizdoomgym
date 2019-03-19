@@ -57,7 +57,7 @@ class VizdoomGoalEnv(VizdoomEnv):
 
             if position_close and angle_close:
                 done = True
-                reward += 10.0
+                reward += 1.0
 
         return self._make_observation(obs), reward, done, info
 
