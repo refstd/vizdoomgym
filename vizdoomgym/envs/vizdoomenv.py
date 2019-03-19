@@ -89,7 +89,7 @@ class VizdoomEnv(gym.Env):
             self.game.add_game_args("+am_backcolor 000000")
             self.game.add_game_args("+am_showthingsprites 0")
             self.game.add_game_args("+am_cheat 0")
-            # self.game.add_game_args("+am_yourcolor 0000ff")
+            self.game.add_game_args("+am_yourcolor 000000")
 
         self.game.init()
 
