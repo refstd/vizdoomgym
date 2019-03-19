@@ -26,7 +26,7 @@ CONFIGS = [
     ['health_gathering_supreme.cfg', 3],    # 9
     ['my_way_home_sparse.cfg', 5],          # 10
     ['my_way_home_very_sparse.cfg', 5],     # 11
-    ['my_way_home_goal.cfg', 6],            # 12
+    ['my_way_home_goal.cfg', 7],            # 12
 ]
 
 
@@ -117,11 +117,9 @@ class VizdoomEnv(gym.Env):
         if not done:
             observation = np.transpose(state.screen_buffer, (1, 2, 0))
         else:
-            observation = np.uint8(np.zeros(self.observation_space.shape))
+            observation = np.zeros(self.observation_space.shape, dtype=np.uint8)
 
-        info = {'dummy': 0}
-
-        return observation, reward, done, info
+        return observation, reward, done, {}
 
     def reset(self):
         self._ensure_initialized()

@@ -47,4 +47,4 @@ class VizdoomGoalEnv(VizdoomEnv):
 
 class VizDoomMyWayHomeGoal(VizdoomGoalEnv):
     def __init__(self):
-        super(VizdoomGoalEnv, self).__init__(12)
+        super(VizDoomMyWayHomeGoal, self).__init__(12)
