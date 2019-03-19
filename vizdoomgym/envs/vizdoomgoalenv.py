@@ -10,8 +10,8 @@ log = logging.getLogger(__name__)
 
 class VizdoomGoalEnv(VizdoomEnv):
 
-    def __init__(self, level):
-        super(VizdoomGoalEnv, self).__init__(level)
+    def __init__(self, level, **kwargs):
+        super(VizdoomGoalEnv, self).__init__(level, **kwargs)
         self._calc_observation_space_with_goal()
 
         self.goal_obs = None
@@ -58,5 +58,5 @@ class VizdoomGoalEnv(VizdoomEnv):
 
 
 class VizDoomMyWayHomeGoal(VizdoomGoalEnv):
-    def __init__(self):
-        super(VizDoomMyWayHomeGoal, self).__init__(12)
+    def __init__(self, **kwargs):
+        super(VizDoomMyWayHomeGoal, self).__init__(12, **kwargs)

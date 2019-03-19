@@ -79,13 +79,17 @@ class VizdoomEnv(gym.Env):
             self.game.set_automap_buffer_enabled(True)
             self.game.set_automap_mode(AutomapMode.OBJECTS)
             self.game.set_automap_rotate(False)
-            self.game.set_automap_render_textures(True)
+            self.game.set_automap_render_textures(False)
 
             self.game.add_available_game_variable(GameVariable.POSITION_X)
             self.game.add_available_game_variable(GameVariable.POSITION_Y)
             self.game.add_available_game_variable(GameVariable.POSITION_Z)
-            self.game.add_game_args("+am_followplayer 1")
+            # self.game.add_game_args("+am_followplayer 1")
+            self.game.add_game_args("+viz_am_center 1")
             self.game.add_game_args("+am_backcolor 000000")
+            self.game.add_game_args("+am_showthingsprites 0")
+            self.game.add_game_args("+am_cheat 0")
+            # self.game.add_game_args("+am_yourcolor 0000ff")
 
         self.game.init()
 
