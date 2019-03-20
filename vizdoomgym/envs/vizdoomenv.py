@@ -84,12 +84,19 @@ class VizdoomEnv(gym.Env):
             self.game.add_available_game_variable(GameVariable.POSITION_X)
             self.game.add_available_game_variable(GameVariable.POSITION_Y)
             self.game.add_available_game_variable(GameVariable.POSITION_Z)
+
+            # self.game.add_game_args("+am_restorecolors")
             # self.game.add_game_args("+am_followplayer 1")
+            background_color = 'ffffff'
             self.game.add_game_args("+viz_am_center 1")
-            self.game.add_game_args("+am_backcolor 000000")
-            self.game.add_game_args("+am_showthingsprites 0")
+            self.game.add_game_args("+am_backcolor " + background_color)
+            self.game.add_game_args("+am_tswallcolor dddddd")
+            # self.game.add_game_args("+am_showthingsprites 0")
+            self.game.add_game_args("+am_yourcolor " + background_color)
             self.game.add_game_args("+am_cheat 0")
-            self.game.add_game_args("+am_yourcolor 000000")
+            self.game.add_game_args("+am_thingcolor 0000ff") # player color
+            self.game.add_game_args("+am_thingcolor_item 00ff00")
+            # self.game.add_game_args("+am_thingcolor_citem 00ff00")
 
         self.game.init()
 
