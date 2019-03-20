@@ -81,10 +81,6 @@ class VizdoomEnv(gym.Env):
             self.game.set_automap_rotate(False)
             self.game.set_automap_render_textures(False)
 
-            self.game.add_available_game_variable(GameVariable.POSITION_X)
-            self.game.add_available_game_variable(GameVariable.POSITION_Y)
-            self.game.add_available_game_variable(GameVariable.POSITION_Z)
-
             # self.game.add_game_args("+am_restorecolors")
             # self.game.add_game_args("+am_followplayer 1")
             background_color = 'ffffff'
@@ -186,6 +182,15 @@ class VizdoomEnv(gym.Env):
         print('===============================')
         print('Done')
         return
+
+    def get_automap_buffer(self):
+        if self.game.is_episode_finished():
+            return None
+        state = self.game.get_state()
+        map = state.automap_buffer
+        map = np.swapaxes(map, 0, 2)
+        map = np.swapaxes(map, 0, 1)
+        return map
 
     @staticmethod
     def get_keys_to_action():
