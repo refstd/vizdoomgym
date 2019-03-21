@@ -50,10 +50,10 @@ class VizdoomGoalEnv(VizdoomEnv):
             agent_x, agent_y, agent_a = variables[1], variables[2], variables[3]
             goal_x, goal_y, goal_a = variables[4], variables[5], variables[6]
 
-            position_close = np.abs(agent_x - goal_x) < 30. and np.abs(agent_y - goal_y) < 30.
+            position_close = np.abs(agent_x - goal_x) < 20. and np.abs(agent_y - goal_y) < 20.
 
             # https://gamedev.stackexchange.com/a/4472
-            angle_close = 180 - np.abs(np.abs(agent_a - goal_a) - 180) < 15.
+            angle_close = 180 - np.abs(np.abs(agent_a - goal_a) - 180) < 20.
 
             if position_close and angle_close:
                 done = True
