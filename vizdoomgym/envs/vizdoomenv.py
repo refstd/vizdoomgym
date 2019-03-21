@@ -122,14 +122,13 @@ class VizdoomEnv(gym.Env):
 
         reward = self.game.make_action(act)
         state = self.game.get_state()
-
-        variables = state.game_variables
-        pos = self._get_positions(variables)
-        info['pos'] = pos
-
         done = self.game.is_episode_finished()
         if not done:
             observation = np.transpose(state.screen_buffer, (1, 2, 0))
+
+            variables = state.game_variables
+            pos = self._get_positions(variables)
+            info['pos'] = pos
         else:
             observation = np.zeros(self.observation_space.shape, dtype=np.uint8)
 

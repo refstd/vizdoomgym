@@ -45,9 +45,9 @@ class VizdoomGoalEnv(VizdoomEnv):
         obs, reward, done, info = super(VizdoomGoalEnv, self).step(action)
 
         if not done:
-            # Check closeness with goal position
             pos = info['pos']
 
+            # Check closeness with goal position
             position_close = np.abs(pos['agent_x'] - pos['goal_x']) < 20. and np.abs(pos['agent_y'] - pos['goal_y']) < 20.
 
             # https://gamedev.stackexchange.com/a/4472
