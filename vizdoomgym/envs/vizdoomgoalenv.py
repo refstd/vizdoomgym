@@ -46,9 +46,7 @@ class VizdoomGoalEnv(VizdoomEnv):
 
         if not done:
             # Check closeness with goal position
-            variables = self.game.get_state().game_variables
-            pos = self._get_positions(variables)
-            info['pos'] = pos
+            pos = info['pos']
 
             position_close = np.abs(pos['agent_x'] - pos['goal_x']) < 20. and np.abs(pos['agent_y'] - pos['goal_y']) < 20.
 
@@ -60,15 +58,6 @@ class VizdoomGoalEnv(VizdoomEnv):
                 reward += 10.0
 
         return self._make_observation(obs), reward, done, info
-
-    def get_info(self):
-        return {'pos': self.get_positions()}
-
-    def get_positions(self):
-        return self._get_positions(self.game.get_state().game_variables)
-
-    def _get_positions(self, variables):
-        return {'agent_x': variables[1], 'agent_y': variables[2], 'agent_a': variables[3], 'goal_x': variables[4], 'goal_y': variables[5], 'goal_a': variables[6]}
 
 
 class VizDoomMyWayHomeGoal(VizdoomGoalEnv):

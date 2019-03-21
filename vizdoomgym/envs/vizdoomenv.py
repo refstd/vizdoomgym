@@ -112,6 +112,7 @@ class VizdoomEnv(gym.Env):
 
     def step(self, action):
         self._ensure_initialized()
+        info = {}
 
         # convert action to vizdoom action space (one hot)
         act = np.zeros(self.action_space.n)
@@ -121,13 +122,18 @@ class VizdoomEnv(gym.Env):
 
         reward = self.game.make_action(act)
         state = self.game.get_state()
+
+        variables = state.game_variables
+        pos = self._get_positions(variables)
+        info['pos'] = pos
+
         done = self.game.is_episode_finished()
         if not done:
             observation = np.transpose(state.screen_buffer, (1, 2, 0))
         else:
             observation = np.zeros(self.observation_space.shape, dtype=np.uint8)
 
-        return observation, reward, done, {}
+        return observation, reward, done, info
 
     def reset(self):
         self._ensure_initialized()
@@ -183,6 +189,15 @@ class VizdoomEnv(gym.Env):
         print('===============================')
         print('Done')
         return
+
+    def get_info(self):
+        return {'pos': self.get_positions()}
+
+    def get_positions(self):
+        return self._get_positions(self.game.get_state().game_variables)
+
+    def _get_positions(self, variables):
+        return {'agent_x': variables[1], 'agent_y': variables[2], 'agent_a': variables[3], 'goal_x': variables[4], 'goal_y': variables[5], 'goal_a': variables[6]}
 
     def get_automap_buffer(self):
         if self.game.is_episode_finished():
