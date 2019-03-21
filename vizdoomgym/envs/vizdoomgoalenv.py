@@ -59,9 +59,6 @@ class VizdoomGoalEnv(VizdoomEnv):
                 done = True
                 reward += 10.0
 
-        if not info:
-            info['pos'] = self.get_positions()
-
         return self._make_observation(obs), reward, done, info
 
     def get_info(self):
