@@ -47,19 +47,28 @@ class VizdoomGoalEnv(VizdoomEnv):
         if not done:
             # Check closeness with goal position
             variables = self.game.get_state().game_variables
-            agent_x, agent_y, agent_a = variables[1], variables[2], variables[3]
-            goal_x, goal_y, goal_a = variables[4], variables[5], variables[6]
+            pos = self._get_positions(variables)
+            info['pos'] = pos
 
-            position_close = np.abs(agent_x - goal_x) < 20. and np.abs(agent_y - goal_y) < 20.
+            position_close = np.abs(pos['agent_x'] - pos['goal_x']) < 20. and np.abs(pos['agent_y'] - pos['goal_y']) < 20.
 
             # https://gamedev.stackexchange.com/a/4472
-            angle_close = 180 - np.abs(np.abs(agent_a - goal_a) - 180) < 20.
+            angle_close = 180 - np.abs(np.abs(pos['agent_a'] - pos['goal_a']) - 180) < 20.
 
             if position_close and angle_close:
                 done = True
                 reward += 10.0
 
         return self._make_observation(obs), reward, done, info
+
+    def get_info(self):
+        return {'pos': self.get_positions()}
+
+    def get_positions(self):
+        return self._get_positions(self.game.get_state().game_variables)
+
+    def _get_positions(self, variables):
+        return {'agent_x': variables[1], 'agent_y': variables[2], 'agent_a': variables[3], 'goal_x': variables[4], 'goal_y': variables[5], 'goal_a': variables[6]}
 
 
 class VizDoomMyWayHomeGoal(VizdoomGoalEnv):
