@@ -65,3 +65,8 @@ class VizdoomGoalEnv(VizdoomEnv):
 class VizDoomMyWayHomeGoal(VizdoomGoalEnv):
     def __init__(self, **kwargs):
         super(VizDoomMyWayHomeGoal, self).__init__(12, **kwargs)
+
+
+class VizDoomSptmBattleNavigation(VizdoomGoalEnv):
+    def __init__(self, **kwargs):
+        super(VizDoomSptmBattleNavigation, self).__init__(13, **kwargs)

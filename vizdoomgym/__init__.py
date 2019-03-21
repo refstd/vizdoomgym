@@ -51,6 +51,11 @@ register(
 )
 
 register(
+    id='VizdoomSptmBattleNavigation-v0',
+    entry_point='vizdoomgym.envs:VizDoomSptmBattleNavigation'
+)
+
+register(
     id='VizdoomTakeCover-v0',
     entry_point='vizdoomgym.envs:VizdoomTakeCover'
 )
