@@ -59,6 +59,15 @@ class VizdoomGoalEnv(VizdoomEnv):
 
         return self._make_observation(obs), reward, done, info
 
+    def get_info(self):
+        return {'pos': self.get_positions()}
+
+    def get_positions(self):
+        return self._get_positions(self.game.get_state().game_variables)
+
+    def _get_positions(self, variables):
+        return {'agent_x': variables[1], 'agent_y': variables[2], 'agent_a': variables[3], 'goal_x': variables[4], 'goal_y': variables[5], 'goal_a': variables[6]}
+
 
 class VizDoomMyWayHomeGoal(VizdoomGoalEnv):
     def __init__(self, **kwargs):

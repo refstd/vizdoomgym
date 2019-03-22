@@ -125,10 +125,7 @@ class VizdoomEnv(gym.Env):
         done = self.game.is_episode_finished()
         if not done:
             observation = np.transpose(state.screen_buffer, (1, 2, 0))
-
-            variables = state.game_variables
-            pos = self._get_positions(variables)
-            info['pos'] = pos
+            info = self.get_info()
         else:
             observation = np.zeros(self.observation_space.shape, dtype=np.uint8)
 
@@ -190,13 +187,7 @@ class VizdoomEnv(gym.Env):
         return
 
     def get_info(self):
-        return {'pos': self.get_positions()}
-
-    def get_positions(self):
-        return self._get_positions(self.game.get_state().game_variables)
-
-    def _get_positions(self, variables):
-        return {'agent_x': variables[1], 'agent_y': variables[2], 'agent_a': variables[3], 'goal_x': variables[4], 'goal_y': variables[5], 'goal_a': variables[6]}
+        return {}
 
     def get_automap_buffer(self):
         if self.game.is_episode_finished():
