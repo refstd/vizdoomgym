@@ -187,7 +187,13 @@ class VizdoomEnv(gym.Env):
         return
 
     def get_info(self):
-        return {}
+        return {'pos': self.get_positions()}
+
+    def get_positions(self):
+        return self._get_positions(self.game.get_state().game_variables)
+
+    def _get_positions(self, variables):
+        return {'agent_x': variables[1], 'agent_y': variables[2], 'agent_a': variables[3]}
 
     def get_automap_buffer(self):
         if self.game.is_episode_finished():
