@@ -69,3 +69,6 @@ register(
     id='VizdoomHealthGatheringSupreme-v0',
     entry_point='vizdoomgym.envs:VizdoomHealthGatheringSupreme'
 )
+
+register(id='VizdoomTexturedMazeEasy-v0', entry_point='vizdoomgym.envs:VizdoomTexturedMazeEasy')
+register(id='VizdoomTexturedMazeVerySparse-v0', entry_point='vizdoomgym.envs:VizdoomTexturedMazeVerySparse')

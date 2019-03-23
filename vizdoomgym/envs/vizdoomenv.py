@@ -27,7 +27,10 @@ CONFIGS = [
     ['my_way_home_sparse.cfg', 5],          # 10
     ['my_way_home_very_sparse.cfg', 5],     # 11
     ['my_way_home_goal.cfg', 7],            # 12
-    ['sptm_battle_navigation.cfg', 7]       # 13
+    ['sptm_battle_navigation.cfg', 7],      # 13
+
+    ['textured_maze_easy.cfg', 7],          # 14
+    ['textured_maze_very_sparse.cfg', 7],   # 15
 ]
 
 
@@ -171,10 +174,10 @@ class VizdoomEnv(gym.Env):
                 print('Total Reward: \t' + str(total_reward))
 
                 if self.show_automap and state.automap_buffer is not None:
-                    map = state.automap_buffer
-                    map = np.swapaxes(map, 0, 2)
-                    map = np.swapaxes(map, 0, 1)
-                    cv2.imshow('ViZDoom Automap Buffer', map)
+                    map_ = state.automap_buffer
+                    map_ = np.swapaxes(map_, 0, 2)
+                    map_ = np.swapaxes(map_, 0, 1)
+                    cv2.imshow('ViZDoom Automap Buffer', map_)
                     cv2.waitKey(28)
                 else:
                     sleep(0.02857)  # 35 fps = 0.02857 sleep between frames
@@ -199,19 +202,17 @@ class VizdoomEnv(gym.Env):
         if self.game.is_episode_finished():
             return None
         state = self.game.get_state()
-        map = state.automap_buffer
-        map = np.swapaxes(map, 0, 2)
-        map = np.swapaxes(map, 0, 1)
-        return map
+        map_ = state.automap_buffer
+        map_ = np.swapaxes(map_, 0, 2)
+        map_ = np.swapaxes(map_, 0, 1)
+        return map_
 
-    @staticmethod
-    def get_keys_to_action():
-        # you can press only one key at a time!
-        keys = {(): 2,
-                (ord('a'),): 0,
-                (ord('d'),): 1,
-                (ord('w'),): 3,
-                (ord('s'),): 4,
-                (ord('q'),): 5,
-                (ord('e'),): 6}
-        return keys
+
+class VizdoomTexturedMazeEasy(VizdoomEnv):
+    def __init__(self, **kwargs):
+        super().__init__(14, **kwargs)
+
+
+class VizdoomTexturedMazeVerySparse(VizdoomEnv):
+    def __init__(self, **kwargs):
+        super().__init__(15, **kwargs)
