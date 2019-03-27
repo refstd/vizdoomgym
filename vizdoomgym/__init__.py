@@ -84,3 +84,8 @@ register(
     id='VizdoomTexturedMaze-v0',
     entry_point='vizdoomgym.envs:VizdoomTexturedMaze'
 )
+
+register(
+    id='VizdoomTexturedMazeMultiGoal-v0',
+    entry_point='vizdoomgym.envs:VizdoomTexturedMazeMultiGoal'
+)
