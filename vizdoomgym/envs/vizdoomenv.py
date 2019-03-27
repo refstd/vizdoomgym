@@ -32,6 +32,7 @@ CONFIGS = [
 
     ['textured_maze_easy.cfg', 7],          # 14
     ['textured_maze_very_sparse.cfg', 7],   # 15
+    ['textured_maze.cfg', 7],               # 16
 ]
 
 
@@ -221,3 +222,8 @@ class VizdoomTexturedMazeEasy(VizdoomEnv):
 class VizdoomTexturedMazeVerySparse(VizdoomEnv):
     def __init__(self, **kwargs):
         super().__init__(15, **kwargs)
+
+
+class VizdoomTexturedMaze(VizdoomEnv):
+    def __init__(self, **kwargs):
+        super().__init__(16, **kwargs)

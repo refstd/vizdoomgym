@@ -70,5 +70,17 @@ register(
     entry_point='vizdoomgym.envs:VizdoomHealthGatheringSupreme'
 )
 
-register(id='VizdoomTexturedMazeEasy-v0', entry_point='vizdoomgym.envs:VizdoomTexturedMazeEasy')
-register(id='VizdoomTexturedMazeVerySparse-v0', entry_point='vizdoomgym.envs:VizdoomTexturedMazeVerySparse')
+register(
+    id='VizdoomTexturedMazeEasy-v0',
+    entry_point='vizdoomgym.envs:VizdoomTexturedMazeEasy'
+)
+
+register(
+    id='VizdoomTexturedMazeVerySparse-v0',
+    entry_point='vizdoomgym.envs:VizdoomTexturedMazeVerySparse'
+)
+
+register(
+    id='VizdoomTexturedMaze-v0',
+    entry_point='vizdoomgym.envs:VizdoomTexturedMaze'
+)
