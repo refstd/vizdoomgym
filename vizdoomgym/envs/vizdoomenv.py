@@ -44,6 +44,7 @@ class VizdoomEnv(gym.Env):
         # init game
         self.level = level
         self.show_automap = show_automap
+        self.coord_limits = None
         self.game = None
         self.state = None
 
@@ -217,13 +218,16 @@ class VizdoomEnv(gym.Env):
 class VizdoomTexturedMazeEasy(VizdoomEnv):
     def __init__(self, **kwargs):
         super().__init__(14, **kwargs)
+        self.coord_limits = (0, 0, 1856, 1856)
 
 
 class VizdoomTexturedMazeVerySparse(VizdoomEnv):
     def __init__(self, **kwargs):
         super().__init__(15, **kwargs)
+        self.coord_limits = (0, 0, 1856, 1856)
 
 
 class VizdoomTexturedMaze(VizdoomEnv):
     def __init__(self, **kwargs):
         super().__init__(16, **kwargs)
+        self.coord_limits = (0, 0, 1856, 1856)
