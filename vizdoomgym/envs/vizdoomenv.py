@@ -68,16 +68,18 @@ class VizdoomEnv(gym.Env):
 
         # Histogram to track positional coverage
         self.max_histogram_length = max_histogram_length
-        X = (self.coord_limits[2] - self.coord_limits[0])
-        Y = (self.coord_limits[3] - self.coord_limits[1])
-        if X > Y:
-            len_x = self.max_histogram_length
-            len_y = int((Y/X) * self.max_histogram_length)
-        else:
-            len_x = int((X/Y) * self.max_histogram_length)
-            len_y = self.max_histogram_length
-        self.current_histogram = np.zeros((len_x, len_y), dtype=np.int32)
-        self.previous_histogram = np.zeros_like(self.current_histogram)
+        self.current_histogram, self.previous_histogram = None, None
+        if self.coord_limits:
+            X = (self.coord_limits[2] - self.coord_limits[0])
+            Y = (self.coord_limits[3] - self.coord_limits[1])
+            if X > Y:
+                len_x = self.max_histogram_length
+                len_y = int((Y/X) * self.max_histogram_length)
+            else:
+                len_x = int((X/Y) * self.max_histogram_length)
+                len_y = self.max_histogram_length
+            self.current_histogram = np.zeros((len_x, len_y), dtype=np.int32)
+            self.previous_histogram = np.zeros_like(self.current_histogram)
 
         self.seed()
 
@@ -167,10 +169,12 @@ class VizdoomEnv(gym.Env):
         img = self.state.screen_buffer
 
         # Swap current and previous histogram
-        swap = self.current_histogram
-        self.current_histogram = self.previous_histogram
-        self.previous_histogram = swap
-        self.current_histogram.fill(0)
+        if (self.current_histogram is not None and
+            self.previous_histogram is not None):
+            swap = self.current_histogram
+            self.current_histogram = self.previous_histogram
+            self.previous_histogram = swap
+            self.current_histogram.fill(0)
 
         return np.transpose(img, (1, 2, 0))
 
@@ -227,7 +231,8 @@ class VizdoomEnv(gym.Env):
 
     def get_info_all(self):
         info = self.get_info()
-        info['previous_histogram'] = self.previous_histogram
+        if self.previous_histogram is not None:
+            info['previous_histogram'] = self.previous_histogram
         return info
 
     def get_positions(self):
@@ -250,6 +255,8 @@ class VizdoomEnv(gym.Env):
         return map_
 
     def _update_histogram(self, info, eps=1e-8):
+        if self.current_histogram is None:
+            return
         agent_x, agent_y = info['pos']['agent_x'], info['pos']['agent_y']
 
         # Get agent coordinates normalized to [0, 1]
