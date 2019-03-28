@@ -17,4 +17,4 @@ from vizdoomgym.envs.vizdoomgoalenv import (VizdoomGoalEnv,
 from vizdoomgym.envs.vizdoomenv import (VizdoomTexturedMaze,
 	VizdoomTexturedMazeEasy, VizdoomTexturedMazeVerySparse,
 	VizdoomTexturedMazeMultiGoal, VizdoomTexturedMazeSuperSparse,
-	VizdoomTexturedMazeLargeNoGoal)
+	VizdoomTexturedMazeLargeNoGoal, VizdoomMyWayHomeMultiGoal)

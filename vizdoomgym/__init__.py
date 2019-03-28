@@ -46,6 +46,11 @@ register(
 )
 
 register(
+    id='VizdoomMyWayHomeMultiGoal-v0',
+    entry_point='vizdoomgym.envs:VizDoomMyWayHomeMultiGoal'
+)
+
+register(
     id='VizdoomPredictPosition-v0',
     entry_point='vizdoomgym.envs:VizdoomPredictPosition'
 )

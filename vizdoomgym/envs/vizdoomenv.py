@@ -36,6 +36,7 @@ CONFIGS = [
     ['textured_maze_multi_goal.cfg', 7],    # 17
     ['textured_maze_super_sparse.cfg', 7],  # 18
     ['textured_maze_large_no_goal.cfg', 7], # 19
+    ['my_way_home_multi_goal.cfg', 7],      # 20
 ]
 
 
@@ -287,6 +288,12 @@ class VizdoomTexturedMazeSuperSparse(VizdoomEnv):
     def __init__(self, **kwargs):
         super().__init__(18, coord_limits=(0, 0, 2336, 2368), **kwargs)
 
+
 class VizdoomTexturedMazeLargeNoGoal(VizdoomEnv):
     def __init__(self, **kwargs):
         super().__init__(19, coord_limits=(0, 0, 2336, 2368), **kwargs)
+
+
+class VizdoomMyWayHomeMultiGoal(VizdoomEnv):
+    def __init__(self, **kwargs):
+        super().__init__(20, coord_limits=(160, -704, 1120, 128), **kwargs)
