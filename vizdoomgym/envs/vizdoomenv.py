@@ -1,5 +1,4 @@
 import logging
-import math
 import os
 from time import sleep
 
@@ -10,6 +9,7 @@ from gym.envs.classic_control import rendering
 from gym.utils import seeding
 import numpy as np
 from vizdoom import *
+import matplotlib.pyplot as plt
 
 log = logging.getLogger(__name__)
 
@@ -41,13 +41,17 @@ CONFIGS = [
 
 class VizdoomEnv(gym.Env):
 
-    def __init__(self, level, show_automap=False):
+    def __init__(self,
+                 level,
+                 coord_limits=None,
+                 max_histogram_length=200,
+                 show_automap=False):
         self.initialized = False
 
         # init game
         self.level = level
         self.show_automap = show_automap
-        self.coord_limits = None
+        self.coord_limits = coord_limits
         self.game = None
         self.state = None
 
@@ -60,6 +64,19 @@ class VizdoomEnv(gym.Env):
         self.action_space = spaces.Discrete(CONFIGS[self.level][1])
 
         self.viewer = None
+
+        # Histogram to track positional coverage
+        self.max_histogram_length = max_histogram_length
+        X = (self.coord_limits[2] - self.coord_limits[0])
+        Y = (self.coord_limits[3] - self.coord_limits[1])
+        if X > Y:
+            len_x = self.max_histogram_length
+            len_y = int((Y/X) * self.max_histogram_length)
+        else:
+            len_x = int((X/Y) * self.max_histogram_length)
+            len_y = self.max_histogram_length
+        self.current_histogram = np.zeros((len_x, len_y), dtype=np.int32)
+        self.previous_histogram = np.zeros_like(self.current_histogram)
 
         self.seed()
 
@@ -135,6 +152,7 @@ class VizdoomEnv(gym.Env):
         if not done:
             observation = np.transpose(state.screen_buffer, (1, 2, 0))
             info = self.get_info()
+            self._update_histogram(info)
         else:
             observation = np.zeros(self.observation_space.shape, dtype=np.uint8)
 
@@ -146,6 +164,13 @@ class VizdoomEnv(gym.Env):
         self._start_episode()
         self.state = self.game.get_state()
         img = self.state.screen_buffer
+
+        # Swap current and previous histogram
+        swap = self.current_histogram
+        self.current_histogram = self.previous_histogram
+        self.previous_histogram = swap
+        self.current_histogram.fill(0)
+
         return np.transpose(img, (1, 2, 0))
 
     def render(self, mode='human'):
@@ -190,6 +215,7 @@ class VizdoomEnv(gym.Env):
 
         if self.show_automap:
             cv2.destroyAllWindows()
+
         sleep(1)
         print('===============================')
         print('Done')
@@ -198,11 +224,16 @@ class VizdoomEnv(gym.Env):
     def get_info(self):
         return {'pos': self.get_positions()}
 
+    def get_info_all(self):
+        info = self.get_info()
+        info['previous_histogram'] = self.previous_histogram
+        return info
+
     def get_positions(self):
         return self._get_positions(self.game.get_state().game_variables)
 
     def _get_positions(self, variables):
-        coords = [math.nan] * 4
+        coords = [np.nan] * 4
         if len(variables) >= 4:
             coords = variables
 
@@ -217,37 +248,45 @@ class VizdoomEnv(gym.Env):
         map_ = np.swapaxes(map_, 0, 1)
         return map_
 
+    def _update_histogram(self, info, eps=1e-8):
+        agent_x, agent_y = info['pos']['agent_x'], info['pos']['agent_y']
+
+        # Get agent coordinates normalized to [0, 1]
+        dx = (agent_x - self.coord_limits[0]) / (self.coord_limits[2] - self.coord_limits[0])
+        dy = (agent_y - self.coord_limits[1]) / (self.coord_limits[3] - self.coord_limits[1])
+
+        # Rescale coordinates to histogram dimensions
+        # Subtract eps to exclude upper bound of dx, dy
+        dx = int((dx - eps) * self.current_histogram.shape[0])
+        dy = int((dy - eps) * self.current_histogram.shape[1])
+
+        self.current_histogram[dx, dy] += 1
+
 
 class VizdoomTexturedMazeEasy(VizdoomEnv):
     def __init__(self, **kwargs):
-        super().__init__(14, **kwargs)
-        self.coord_limits = (0, 0, 1856, 1856)
+        super().__init__(14, coord_limits=(0, 0, 1856, 1856), **kwargs)
 
 
 class VizdoomTexturedMazeVerySparse(VizdoomEnv):
     def __init__(self, **kwargs):
-        super().__init__(15, **kwargs)
-        self.coord_limits = (0, 0, 1856, 1856)
+        super().__init__(15, coord_limits=(0, 0, 1856, 1856), **kwargs)
 
 
 class VizdoomTexturedMaze(VizdoomEnv):
     def __init__(self, **kwargs):
-        super().__init__(16, **kwargs)
-        self.coord_limits = (0, 0, 1856, 1856)
+        super().__init__(16, coord_limits=(0, 0, 1856, 1856), **kwargs)
 
 
 class VizdoomTexturedMazeMultiGoal(VizdoomEnv):
     def __init__(self, **kwargs):
-        super().__init__(17, **kwargs)
-        self.coord_limits = (0, 0, 1856, 1856)
+        super().__init__(17, coord_limits=(0, 0, 1856, 1856), **kwargs)
 
 
 class VizdoomTexturedMazeSuperSparse(VizdoomEnv):
     def __init__(self, **kwargs):
-        super().__init__(18, **kwargs)
-        self.coord_limits = (0, 0, 2336, 2368)
+        super().__init__(18, coord_limits=(0, 0, 2336, 2368), **kwargs)
 
 class VizdoomTexturedMazeLargeNoGoal(VizdoomEnv):
     def __init__(self, **kwargs):
-        super().__init__(19, **kwargs)
-        self.coord_limits = (0, 0, 2336, 2368)
+        super().__init__(19, coord_limits=(0, 0, 2336, 2368), **kwargs)
