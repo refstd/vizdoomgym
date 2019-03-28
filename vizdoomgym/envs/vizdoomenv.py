@@ -34,6 +34,7 @@ CONFIGS = [
     ['textured_maze_very_sparse.cfg', 7],   # 15
     ['textured_maze.cfg', 7],               # 16
     ['textured_maze_multi_goal.cfg', 7],    # 17
+    ['textured_maze_super_sparse.cfg', 7],  # 18
 ]
 
 
@@ -238,3 +239,9 @@ class VizdoomTexturedMazeMultiGoal(VizdoomEnv):
     def __init__(self, **kwargs):
         super().__init__(17, **kwargs)
         self.coord_limits = (0, 0, 1856, 1856)
+
+
+class VizdoomTexturedMazeSuperSparse(VizdoomEnv):
+    def __init__(self, **kwargs):
+        super().__init__(18, **kwargs)
+        self.coord_limits = (0, 0, 2336, 2368)
