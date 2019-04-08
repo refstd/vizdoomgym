@@ -51,6 +51,16 @@ register(
 )
 
 register(
+    id='VizdoomMyWayHomeMultiGoalRandom-v0',
+    entry_point='vizdoomgym.envs:VizdoomMyWayHomeMultiGoalRandom'
+)
+
+register(
+    id='VizdoomMyWayHomeNoGoal-v0',
+    entry_point='vizdoomgym.envs:VizdoomMyWayHomeNoGoal'
+)
+
+register(
     id='VizdoomPredictPosition-v0',
     entry_point='vizdoomgym.envs:VizdoomPredictPosition'
 )
@@ -104,3 +114,4 @@ register(
     id='VizdoomTexturedMazeLargeNoGoal-v0',
     entry_point='vizdoomgym.envs:VizdoomTexturedMazeLargeNoGoal'
 )
+

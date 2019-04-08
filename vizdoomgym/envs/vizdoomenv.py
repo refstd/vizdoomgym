@@ -4,39 +4,39 @@ from time import sleep
 
 import cv2
 import gym
+import numpy as np
 from gym import spaces
 from gym.envs.classic_control import rendering
 from gym.utils import seeding
-import numpy as np
 from vizdoom import *
-import matplotlib.pyplot as plt
 
 log = logging.getLogger(__name__)
 
-
 CONFIGS = [
-    ['basic.cfg', 3],                       # 0
-    ['deadly_corridor.cfg', 7],             # 1
-    ['defend_the_center.cfg', 3],           # 2
-    ['defend_the_line.cfg', 3],             # 3
-    ['health_gathering.cfg', 3],            # 4
-    ['my_way_home.cfg', 5],                 # 5
-    ['predict_position.cfg', 3],            # 6
-    ['take_cover.cfg', 2],                  # 7
-    ['deathmatch.cfg', 20],                 # 8
-    ['health_gathering_supreme.cfg', 3],    # 9
-    ['my_way_home_sparse.cfg', 5],          # 10
-    ['my_way_home_very_sparse.cfg', 5],     # 11
-    ['my_way_home_goal.cfg', 7],            # 12
-    ['sptm_battle_navigation.cfg', 7],      # 13
+    ['basic.cfg', 3],  # 0
+    ['deadly_corridor.cfg', 7],  # 1
+    ['defend_the_center.cfg', 3],  # 2
+    ['defend_the_line.cfg', 3],  # 3
+    ['health_gathering.cfg', 3],  # 4
+    ['my_way_home.cfg', 5],  # 5
+    ['predict_position.cfg', 3],  # 6
+    ['take_cover.cfg', 2],  # 7
+    ['deathmatch.cfg', 20],  # 8
+    ['health_gathering_supreme.cfg', 3],  # 9
+    ['my_way_home_sparse.cfg', 5],  # 10
+    ['my_way_home_very_sparse.cfg', 5],  # 11
+    ['my_way_home_goal.cfg', 7],  # 12
+    ['sptm_battle_navigation.cfg', 7],  # 13
 
-    ['textured_maze_easy.cfg', 7],          # 14
-    ['textured_maze_very_sparse.cfg', 7],   # 15
-    ['textured_maze.cfg', 7],               # 16
-    ['textured_maze_multi_goal.cfg', 7],    # 17
+    ['textured_maze_easy.cfg', 7],  # 14
+    ['textured_maze_very_sparse.cfg', 7],  # 15
+    ['textured_maze.cfg', 7],  # 16
+    ['textured_maze_multi_goal.cfg', 7],  # 17
     ['textured_maze_super_sparse.cfg', 7],  # 18
-    ['textured_maze_large_no_goal.cfg', 7], # 19
-    ['my_way_home_multi_goal.cfg', 7],      # 20
+    ['textured_maze_large_no_goal.cfg', 7],  # 19
+    ['my_way_home_multi_goal.cfg', 7],  # 20
+    ['my_way_home_multi_goal_random.cfg', 7],  # 21
+    ['my_way_home_no_goal.cfg', 7],  # 22
 ]
 
 
@@ -74,9 +74,9 @@ class VizdoomEnv(gym.Env):
             Y = (self.coord_limits[3] - self.coord_limits[1])
             if X > Y:
                 len_x = self.max_histogram_length
-                len_y = int((Y/X) * self.max_histogram_length)
+                len_y = int((Y / X) * self.max_histogram_length)
             else:
-                len_x = int((X/Y) * self.max_histogram_length)
+                len_x = int((X / Y) * self.max_histogram_length)
                 len_y = self.max_histogram_length
             self.current_histogram = np.zeros((len_x, len_y), dtype=np.int32)
             self.previous_histogram = np.zeros_like(self.current_histogram)
@@ -120,7 +120,7 @@ class VizdoomEnv(gym.Env):
             # self.game.add_game_args("+am_showthingsprites 0")
             self.game.add_game_args("+am_yourcolor " + background_color)
             self.game.add_game_args("+am_cheat 0")
-            self.game.add_game_args("+am_thingcolor 0000ff") # player color
+            self.game.add_game_args("+am_thingcolor 0000ff")  # player color
             self.game.add_game_args("+am_thingcolor_item 00ff00")
             # self.game.add_game_args("+am_thingcolor_citem 00ff00")
 
@@ -169,8 +169,7 @@ class VizdoomEnv(gym.Env):
         img = self.state.screen_buffer
 
         # Swap current and previous histogram
-        if (self.current_histogram is not None and
-            self.previous_histogram is not None):
+        if self.current_histogram is not None and self.previous_histogram is not None:
             swap = self.current_histogram
             self.current_histogram = self.previous_histogram
             self.previous_histogram = swap
@@ -304,3 +303,13 @@ class VizdoomTexturedMazeLargeNoGoal(VizdoomEnv):
 class VizdoomMyWayHomeMultiGoal(VizdoomEnv):
     def __init__(self, **kwargs):
         super().__init__(20, coord_limits=(160, -704, 1120, 128), **kwargs)
+
+
+class VizdoomMyWayHomeMultiGoalRandom(VizdoomEnv):
+    def __init__(self, **kwargs):
+        super().__init__(21, coord_limits=(160, -704, 1120, 128), **kwargs)
+
+
+class VizdoomMyWayHomeNoGoal(VizdoomEnv):
+    def __init__(self, **kwargs):
+        super().__init__(22, coord_limits=(160, -704, 1120, 128), **kwargs)

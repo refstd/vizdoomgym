@@ -12,9 +12,10 @@ from vizdoomgym.envs.vizdoomtakecover import VizdoomTakeCover
 from vizdoomgym.envs.vizdoomdeathmatch import VizdoomDeathmatch
 from vizdoomgym.envs.vizdoomhealthgatheringsupreme import VizdoomHealthGatheringSupreme
 
-from vizdoomgym.envs.vizdoomgoalenv import (VizdoomGoalEnv,
-	VizDoomMyWayHomeGoal, VizDoomSptmBattleNavigation)
-from vizdoomgym.envs.vizdoomenv import (VizdoomTexturedMaze,
-	VizdoomTexturedMazeEasy, VizdoomTexturedMazeVerySparse,
-	VizdoomTexturedMazeMultiGoal, VizdoomTexturedMazeSuperSparse,
-	VizdoomTexturedMazeLargeNoGoal, VizdoomMyWayHomeMultiGoal)
+from vizdoomgym.envs.vizdoomgoalenv import VizdoomGoalEnv, VizDoomMyWayHomeGoal, VizDoomSptmBattleNavigation
+
+from vizdoomgym.envs.vizdoomenv import (
+    VizdoomTexturedMaze, VizdoomTexturedMazeEasy, VizdoomTexturedMazeVerySparse, VizdoomTexturedMazeMultiGoal,
+    VizdoomTexturedMazeSuperSparse, VizdoomTexturedMazeLargeNoGoal, VizdoomMyWayHomeMultiGoal,
+    VizdoomMyWayHomeMultiGoalRandom, VizdoomMyWayHomeNoGoal,
+)
