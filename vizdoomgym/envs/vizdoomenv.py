@@ -6,7 +6,6 @@ import cv2
 import gym
 import numpy as np
 from gym import spaces
-from gym.envs.classic_control import rendering
 from gym.utils import seeding
 from vizdoom import *
 
@@ -193,6 +192,7 @@ class VizdoomEnv(gym.Env):
                 img = cv2.resize(img, (render_w, render_h))
 
             if self.viewer is None:
+                from gym.envs.classic_control import rendering
                 self.viewer = rendering.SimpleImageViewer(maxwidth=800)
             self.viewer.imshow(img)
         except AttributeError:
