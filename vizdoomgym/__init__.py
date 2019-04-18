@@ -61,6 +61,11 @@ register(
 )
 
 register(
+    id='VizdoomMyWayHomeNoGoalRandom-v0',
+    entry_point='vizdoomgym.envs:VizdoomMyWayHomeNoGoalRandom'
+)
+
+register(
     id='VizdoomPredictPosition-v0',
     entry_point='vizdoomgym.envs:VizdoomPredictPosition'
 )

@@ -37,6 +37,7 @@ CONFIGS = [
     ['my_way_home_multi_goal.cfg', 7],  # 20
     ['my_way_home_multi_goal_random.cfg', 7],  # 21
     ['my_way_home_no_goal.cfg', 7],  # 22
+    ['my_way_home_no_goal_random.cfg', 7],  # 23
 ]
 
 
@@ -46,13 +47,15 @@ class VizdoomEnv(gym.Env):
                  level,
                  coord_limits=None,
                  max_histogram_length=200,
-                 show_automap=False):
+                 show_automap=False,
+                 skip_frames=1):
         self.initialized = False
 
         # init game
         self.level = level
         self.show_automap = show_automap
         self.coord_limits = coord_limits
+        self.skip_frames = skip_frames
         self.game = None
         self.state = None
 
@@ -149,7 +152,7 @@ class VizdoomEnv(gym.Env):
         act = np.uint8(act)
         act = act.tolist()
 
-        reward = self.game.make_action(act)
+        reward = self.game.make_action(act, self.skip_frames)
         state = self.game.get_state()
         done = self.game.is_episode_finished()
         if not done:
@@ -180,7 +183,14 @@ class VizdoomEnv(gym.Env):
     def render(self, mode='human'):
         try:
             img = self.game.get_state().screen_buffer
-            img = np.transpose(img, [1, 2, 0])
+            img = np.transpose(img, [1, 2, 0])  # bgr to rgb
+
+            h, w = img.shape[:2]
+            render_w = 640
+
+            if w < render_w:
+                render_h = int(640 * h / w)
+                img = cv2.resize(img, (render_w, render_h))
 
             if self.viewer is None:
                 self.viewer = rendering.SimpleImageViewer(maxwidth=800)
@@ -313,3 +323,8 @@ class VizdoomMyWayHomeMultiGoalRandom(VizdoomEnv):
 class VizdoomMyWayHomeNoGoal(VizdoomEnv):
     def __init__(self, **kwargs):
         super().__init__(22, coord_limits=(160, -704, 1120, 128), **kwargs)
+
+
+class VizdoomMyWayHomeNoGoalRandom(VizdoomEnv):
+    def __init__(self, **kwargs):
+        super().__init__(23, coord_limits=(160, -704, 1120, 128), **kwargs)
