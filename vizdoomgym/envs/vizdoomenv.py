@@ -143,7 +143,7 @@ class VizdoomEnv(gym.Env):
 
     def step(self, action):
         self._ensure_initialized()
-        info = {}
+        info = {'num_frames': self.skip_frames}
 
         # convert action to vizdoom action space (one hot)
         act = np.zeros(self.action_space.n)
@@ -156,11 +156,12 @@ class VizdoomEnv(gym.Env):
         done = self.game.is_episode_finished()
         if not done:
             observation = np.transpose(state.screen_buffer, (1, 2, 0))
-            info = self.get_info()
+            info.update(self.get_info())
             self._update_histogram(info)
         else:
             observation = np.zeros(self.observation_space.shape, dtype=np.uint8)
 
+        # print(info)
         return observation, reward, done, info
 
     def reset(self):
