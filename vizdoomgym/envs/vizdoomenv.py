@@ -161,7 +161,6 @@ class VizdoomEnv(gym.Env):
         else:
             observation = np.zeros(self.observation_space.shape, dtype=np.uint8)
 
-        # print(info)
         return observation, reward, done, info
 
     def reset(self):
