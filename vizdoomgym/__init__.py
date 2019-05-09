@@ -116,6 +116,11 @@ register(
 )
 
 register(
+    id='VizdoomTexturedMazeSuperSparse-v2',
+    entry_point='vizdoomgym.envs:VizdoomTexturedMazeSuperSparseV2'
+)
+
+register(
     id='VizdoomTexturedMazeLargeNoGoal-v0',
     entry_point='vizdoomgym.envs:VizdoomTexturedMazeLargeNoGoal'
 )

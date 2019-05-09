@@ -18,4 +18,5 @@ from vizdoomgym.envs.vizdoomenv import (
     VizdoomTexturedMaze, VizdoomTexturedMazeEasy, VizdoomTexturedMazeVerySparse, VizdoomTexturedMazeMultiGoal,
     VizdoomTexturedMazeSuperSparse, VizdoomTexturedMazeLargeNoGoal, VizdoomMyWayHomeMultiGoal,
     VizdoomMyWayHomeMultiGoalRandom, VizdoomMyWayHomeNoGoal, VizdoomMyWayHomeNoGoalRandom,
+    VizdoomTexturedMazeSuperSparseV2,
 )
