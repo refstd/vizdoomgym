@@ -125,3 +125,7 @@ register(
     entry_point='vizdoomgym.envs:VizdoomTexturedMazeLargeNoGoal'
 )
 
+register(
+    id='VizdoomTexturedMazeNoGoalRandom-v0',
+    entry_point='vizdoomgym.envs:VizdoomTexturedMazeNoGoalRandom'
+)

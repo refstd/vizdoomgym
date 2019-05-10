@@ -39,6 +39,7 @@ CONFIGS = [
     ['my_way_home_no_goal_random.cfg', 7],  # 23
 
     ['textured_maze_super_sparse_v2.cfg', 7],  # 24
+    ['textured_maze_no_goal_random.cfg', 7],  # 25
 ]
 
 
@@ -49,7 +50,8 @@ class VizdoomEnv(gym.Env):
                  coord_limits=None,
                  max_histogram_length=200,
                  show_automap=False,
-                 skip_frames=1):
+                 skip_frames=1,
+                 level_map='map01'):
         self.initialized = False
 
         # init game
@@ -61,6 +63,7 @@ class VizdoomEnv(gym.Env):
         self.state = None
 
         self.curr_seed = 0
+        self.level_map = level_map
 
         self.screen_w, self.screen_h, self.channels = 640, 480, 3
         self.screen_resolution = ScreenResolution.RES_640X480
@@ -99,6 +102,9 @@ class VizdoomEnv(gym.Env):
         scenarios_dir = os.path.join(os.path.dirname(__file__), 'scenarios')
         self.game.load_config(os.path.join(scenarios_dir, CONFIGS[self.level][0]))
         self.game.set_screen_resolution(self.screen_resolution)
+        # Setting an invalid level map will cause the game to freeze silently
+        self.game.set_doom_map(self.level_map)
+        self.game.set_seed(self.rng.random_integers(0, 2**32-1))
 
         if mode == 'algo':
             self.game.set_window_visible(False)
@@ -133,15 +139,17 @@ class VizdoomEnv(gym.Env):
         self.initialized = True
 
     def _start_episode(self):
-        if self.curr_seed > 0:
-            self.game.set_seed(self.curr_seed)
-            self.curr_seed = 0
+        # # TODO: Why set the seed here? Game is already initialized.
+        # if self.curr_seed > 0:
+        #     self.game.set_seed(self.curr_seed)
+        #     self.curr_seed = self.rng.random_integers(0, 2**32 - 1)
         self.game.new_episode()
         return
 
     def seed(self, seed=None):
-        self.curr_seed = seeding.hash_seed(seed) % 2 ** 32
-        return [self.curr_seed]
+        self.curr_seed = seeding.hash_seed(seed, max_bytes=4)
+        self.rng, _ = seeding.np_random(seed=self.curr_seed)
+        return [self.curr_seed, self.rng]
 
     def step(self, action):
         self._ensure_initialized()
@@ -165,8 +173,8 @@ class VizdoomEnv(gym.Env):
 
         return observation, reward, done, info
 
-    def reset(self):
-        self._ensure_initialized()
+    def reset(self, mode='algo'):
+        self._ensure_initialized(mode)
 
         self._start_episode()
         self.state = self.game.get_state()
@@ -204,38 +212,35 @@ class VizdoomEnv(gym.Env):
         if self.viewer is not None:
             self.viewer.close()
 
-    def play_human_mode(self):
-        self._ensure_initialized('human')
-        self._start_episode()
+    def play_human_mode(self, num_episodes=3):
+        for episode in range(num_episodes):
+            self.reset('human')
+            while not self.game.is_episode_finished():
+                self.game.advance_action()
+                state = self.game.get_state()
+                total_reward = self.game.get_total_reward()
 
-        while not self.game.is_episode_finished():
-            self.game.advance_action()
-            state = self.game.get_state()
-            total_reward = self.game.get_total_reward()
+                if state is not None:
+                    print('===============================')
+                    print('State: #' + str(state.number))
+                    print('Action: \t' + str(self.game.get_last_action()) + '\t (=> only allowed actions)')
+                    print('Reward: \t' + str(self.game.get_last_reward()))
+                    print('Total Reward: \t' + str(total_reward))
 
-            if state is not None:
-                print('===============================')
-                print('State: #' + str(state.number))
-                print('Action: \t' + str(self.game.get_last_action()) + '\t (=> only allowed actions)')
-                print('Reward: \t' + str(self.game.get_last_reward()))
-                print('Total Reward: \t' + str(total_reward))
-
-                if self.show_automap and state.automap_buffer is not None:
-                    map_ = state.automap_buffer
-                    map_ = np.swapaxes(map_, 0, 2)
-                    map_ = np.swapaxes(map_, 0, 1)
-                    cv2.imshow('ViZDoom Automap Buffer', map_)
-                    cv2.waitKey(28)
-                else:
-                    sleep(0.02857)  # 35 fps = 0.02857 sleep between frames
-
-        if self.show_automap:
-            cv2.destroyAllWindows()
+                    if self.show_automap and state.automap_buffer is not None:
+                        map_ = state.automap_buffer
+                        map_ = np.swapaxes(map_, 0, 2)
+                        map_ = np.swapaxes(map_, 0, 1)
+                        cv2.imshow('ViZDoom Automap Buffer', map_)
+                        cv2.waitKey(28)
+                    else:
+                        sleep(0.02857)  # 35 fps = 0.02857 sleep between frames
+            if self.show_automap:
+                cv2.destroyAllWindows()
 
         sleep(1)
         print('===============================')
         print('Done')
-        return
 
     def get_info(self):
         return {'pos': self.get_positions()}

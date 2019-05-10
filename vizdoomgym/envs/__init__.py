@@ -13,6 +13,7 @@ from vizdoomgym.envs.vizdoomdeathmatch import VizdoomDeathmatch
 from vizdoomgym.envs.vizdoomhealthgatheringsupreme import VizdoomHealthGatheringSupreme
 
 from vizdoomgym.envs.vizdoomgoalenv import VizdoomGoalEnv, VizDoomMyWayHomeGoal, VizDoomSptmBattleNavigation
+from vizdoomgym.envs.vizdoomrandommapenv import VizdoomTexturedMazeNoGoalRandom
 
 from vizdoomgym.envs.vizdoomenv import (
     VizdoomTexturedMaze, VizdoomTexturedMazeEasy, VizdoomTexturedMazeVerySparse, VizdoomTexturedMazeMultiGoal,
