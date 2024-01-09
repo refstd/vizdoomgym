@@ -166,6 +166,7 @@ class VizdoomEnv(gym.Env):
         state = self.game.get_state()
         done = self.game.is_episode_finished()
         if not done:
+            observation = state.screen_buffer
             info.update(self.get_info())
             self._update_histogram(info)
         else:
